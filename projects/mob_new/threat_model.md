@@ -57,10 +57,12 @@ installs the Phoenix project-generator archive before removing network access.
 Hex cache/registry records remain available. `MOB_DIR` and `MOB_DEV_DIR` point at
 auxiliary sources, matching the --local path-resolution setup used by CI.
 
-Run the suite with `MIX_ENV=test mix test`. It includes project generation,
-LiveView patching and packed-archive tests. The archive tests run `deps.get`
-themselves; `HEX_OFFLINE=1` forces them to use the retained cache. No internet
-should be necessary for these generator tests after the image is built.
+Run the suite with `MIX_ENV=test mix test --exclude requires_android_ndk`. It
+includes project generation, LiveView patching and packed-archive tests. The
+Docker build runs this suite once with network access so generated projects'
+dependency graphs and Hex package archives remain available; `HEX_OFFLINE=1`
+then requires later runs to use that retained cache. The excluded NDK compile
+test is still in source-audit scope and its structural companion runs on Linux.
 
 Exercise the actual CLI without installing generated dependencies:
 

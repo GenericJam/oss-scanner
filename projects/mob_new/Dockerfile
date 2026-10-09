@@ -17,7 +17,10 @@ WORKDIR /src
 RUN MIX_ENV=dev mix deps.get \
     && MIX_ENV=test mix deps.get \
     && MIX_ENV=dev mix compile \
-    && MIX_ENV=test mix compile
+    && MIX_ENV=test mix compile \
+    && MIX_ENV=test mix test --exclude requires_android_ndk
 
-# Packed-archive tests invoke deps.get themselves; use the retained Hex cache.
+# Integration tests above populate Hex package archives and compile generated
+# local projects while networking is available. The scanner can repeat them
+# offline from the retained Hex cache.
 ENV HEX_OFFLINE=1

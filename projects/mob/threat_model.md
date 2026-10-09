@@ -55,22 +55,22 @@ Run the host suite with `MIX_ENV=test mix test`. Its existing test helper exclud
 has no Zig toolchain. These exclusions describe available execution coverage,
 not exclusions from the source audit.
 
-Four portable native harnesses compile actual iOS headers and can be rerun:
+Three portable native harnesses compile actual iOS headers and can be rerun:
 
 ```
-make -C test/native CC=clang dist_port_test dist_cookie_test stored_queue_test init_args_test
+make -C test/native CC=clang dist_port_test dist_cookie_test init_args_test
 ./test/native/dist_port_test
 ./test/native/dist_cookie_test
-./test/native/stored_queue_test
 ./test/native/init_args_test
 ```
 
 For sanitizer reproducers, clang is installed; rebuild relevant harnesses with
 `-g -fno-omit-frame-pointer -fsanitize=address,undefined` where supported.
-`test/native/frame_registry_test.m` requires Apple Foundation. Full iOS/Android
-native builds require platform SDKs/runtime artifacts and devices not present in
-this Linux image. Those source paths remain important review targets; state
-whether a finding was exercised on a portable harness or only source-analyzed.
+`test/native/frame_registry_test.m` requires Apple Foundation and
+`stored_queue_test.c` requires Apple's `os_unfair_lock`. Full iOS/Android native
+builds require platform SDKs/runtime artifacts and devices not present in this
+Linux image. Those source paths remain important review targets; state whether a
+finding was exercised on a portable harness or only source-analyzed.
 
 ## Findings and severity
 
