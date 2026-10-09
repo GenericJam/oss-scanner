@@ -31,19 +31,22 @@ jobs:
           PROJECT: ${{ matrix.project }}
         run: |
           case "$PROJECT" in
+            mob)
+              docker run --rm --network none --cpus 2 --memory 8g -w /src \
+                -e MIX_ENV=test "oss-scanner-check/built:$PROJECT" \
+                sh -ec "find test -name '*_test.exs' ! -path 'test/mob/dist_test.exs' -print0 | xargs -0 mix test"
+              ;;
             mob_dev)
-              TEST_ARGS=(--exclude macos_only --exclude requires_zig)
+              docker run --rm --network none --cpus 2 --memory 8g -w /src \
+                -e MIX_ENV=test "oss-scanner-check/built:$PROJECT" \
+                mix test --exclude macos_only --exclude requires_zig
               ;;
             mob_new)
-              TEST_ARGS=(--exclude requires_android_ndk)
-              ;;
-            *)
-              TEST_ARGS=()
+              docker run --rm --network none --cpus 2 --memory 8g -w /src \
+                -e MIX_ENV=test "oss-scanner-check/built:$PROJECT" \
+                mix test --exclude requires_android_ndk
               ;;
           esac
-          docker run --rm --network none --cpus 2 --memory 8g -w /src \
-            -e MIX_ENV=test "oss-scanner-check/built:$PROJECT" \
-            mix test "${TEST_ARGS[@]}"
       - name: Run portable native harnesses offline
         if: matrix.project == 'mob'
         run: |

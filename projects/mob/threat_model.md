@@ -50,10 +50,18 @@ The image contains Elixir 1.19.5 / OTP 28.0.4 and compiled dev/test environments
 The checkout is `/src`; Hex dependencies and registry data are retained locally.
 No credentials, live phones or maintainer home-directory data are supplied.
 
-Run the host suite with `MIX_ENV=test mix test`. Its existing test helper excludes
-`:onboarding` and `:on_device`, and excludes `:zig` when Zig is absent. This image
-has no Zig toolchain. These exclusions describe available execution coverage,
-not exclusions from the source audit.
+The image build runs `test/mob/dist_test.exs` while Docker provides a non-loopback
+interface. The scanner's offline runtime has only loopback, so run every other
+host test there with:
+
+```
+find test -name '*_test.exs' ! -path 'test/mob/dist_test.exs' -print0 |
+  xargs -0 mix test
+```
+
+The existing test helper excludes `:onboarding` and `:on_device`, and excludes
+`:zig` when Zig is absent. This image has no Zig toolchain. These execution
+limits do not exclude any source from the audit.
 
 Three portable native harnesses compile actual iOS headers and can be rerun:
 

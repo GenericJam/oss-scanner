@@ -13,6 +13,10 @@ RUN MIX_ENV=dev mix deps.get \
     && MIX_ENV=dev mix compile \
     && MIX_ENV=test mix compile
 
+# Docker's offline runtime has only a loopback interface, while this test
+# verifies refusal on a non-loopback address. Exercise it during image build.
+RUN MIX_ENV=test mix test test/mob/dist_test.exs
+
 # These harnesses compile actual portable iOS headers. The stored-queue and
 # Objective-C frame-registry harnesses require Apple frameworks/APIs.
 RUN make -C test/native CC=clang dist_port_test dist_cookie_test init_args_test
